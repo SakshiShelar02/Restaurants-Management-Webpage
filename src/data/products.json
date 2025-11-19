@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Bluetooth Headphones",
+    "price": 79.99,
+    "category": "electronics",
+    "image": "/images/electronics/headphone.jpg",
+    "description": "High-quality wireless headphones with noise cancellation and 30-hour battery life."
+  },
+  {
+    "id": 2,
+    "name": "Cotton T-Shirt",
+    "price": 19.99,
+    "category": "clothing",
+    "image": "/images/clothing/tshirt.jpg",
+    "description": "Comfortable 100% cotton t-shirt available in multiple colors and sizes."
+  },
+  {
+    "id": 3,
+    "name": "Smartphone",
+    "price": 699.99,
+    "category": "electronics",
+    "image": "/images/electronics/phone.jpg",
+    "description": "Latest smartphone with advanced camera, 5G connectivity, and powerful processor."
+  },
+  {
+    "id": 4,
+    "name": "Coffee Mug",
+    "price": 12.99,
+    "category": "home",
+    "image": "/images/home/Mug.jpg",
+    "description": "Ceramic coffee mug with elegant design, perfect for your morning brew."
+  },
+  {
+    "id": 5,
+    "name": "Running Shoes",
+    "price": 89.99,
+    "category": "clothing",
+    "image": "/images/clothing/shoe.jpg",
+    "description": "Comfortable running shoes with advanced cushioning for athletes."
+  },
+  {
+    "id": 6,
+    "name": "Laptop",
+    "price": 999.99,
+    "category": "electronics",
+    "image": "/images/electronics/laptop.jpg",
+    "description": "High-performance laptop for work, gaming, and creative tasks."
+  },
+  {
+    "id": 7,
+    "name": "Desk Lamp",
+    "price": 34.99,
+    "category": "home",
+    "image": "/images/home/lamp.jpg",
+    "description": "LED desk lamp with adjustable brightness and color temperature."
+  },
+  {
+    "id": 8,
+    "name": "Water Bottle",
+    "price": 24.99,
+    "category": "home",
+    "image": "/images/home/bottle.jpg",
+    "description": "Insulated stainless steel water bottle, keeps drinks cold for 24 hours."
+  },
+  {
+    "id": 9,
+    "name": "Backpack",
+    "price": 49.99,
+    "category": "accessories",
+    "image": "/images/accessories/bag.jpg",
+    "description": "Durable backpack with multiple compartments and laptop sleeve."
+  },
+  {
+    "id": 10,
+    "name": "Watch",
+    "price": 199.99,
+    "category": "accessories",
+    "image": "/images/accessories/watch.jpg",
+    "description": "Elegant wristwatch with leather strap and precise movement."
+  },
+  {
+    "id": 11,
+    "name": "Wireless Mouse",
+    "price": 29.99,
+    "category": "electronics",
+    "image": "/images/electronics/mouse.jpg",
+    "description": "Ergonomic wireless mouse with precision tracking and long battery life."
+  },
+  {
+    "id": 12,
+    "name": "Jeans",
+    "price": 39.99,
+    "category": "clothing",
+    "image": "/images/clothing/jeans.jpg",
+    "description": "Classic denim jeans in various sizes and washes."
+  },
+  {
+    "id": 13,
+    "name": "Bookshelf",
+    "price": 149.99,
+    "category": "home",
+    "image": "/images/home/bookshelf.jpg",
+    "description": "Wooden bookshelf with 5 shelves, perfect for home or office."
+  },
+  {
+    "id": 14,
+    "name": "Sunglasses",
+    "price": 59.99,
+    "category": "accessories",
+    "image": "/images/accessories/sunglasses.jpg",
+    "description": "UV protection sunglasses with stylish frame and polarized lenses."
+  },
+  {
+    "id": 15,
+    "name": "Keyboard",
+    "price": 89.99,
+    "category": "electronics",
+    "image": "/images/electronics/keyboard.jpg",
+    "description": "Mechanical keyboard with RGB lighting and responsive keys."
+  },
+  {
+    "id": 16,
+    "name": "Jacket",
+    "price": 79.99,
+    "category": "clothing",
+    "image": "/images/clothing/jacket.jpg",
+    "description": "Warm winter jacket with waterproof material and multiple pockets."
+  },
+  {
+    "id": 17,
+    "name": "Pillow",
+    "price": 19.99,
+    "category": "home",
+    "image": "/images/home/pillow.jpg",
+    "description": "Memory foam pillow for better sleep and neck support."
+  },
+  {
+    "id": 18,
+    "name": "Fitness Tracker",
+    "price": 49.99,
+    "category": "electronics",
+    "image": "/images/electronics/fitness.jpg",
+    "description": "Smart fitness tracker with heart rate monitor and activity tracking."
+  },
+  {
+    "id": 19,
+    "name": "Scarf",
+    "price": 14.99,
+    "category": "clothing",
+    "image": "/images/clothing/scarf.jpg",
+    "description": "Woolen scarf for cold weather, available in various colors."
+  },
+  {
+    "id": 20,
+    "name": "Plant Pot",
+    "price": 22.99,
+    "category": "home",
+    "image": "/images/home/pot.jpg",
+    "description": "Ceramic plant pot with drainage hole, perfect for indoor plants."
+  }
+]
