@@ -41,7 +41,8 @@ const AddRestaurantModal = ({ restaurant, onClose }) => {
     active: true,
     hasOutdoorSeating: false,
     rating: 4.0,
-    monthlyCustomers: 0
+    monthlyCustomers: 0,
+    vegNonVeg: 'Non-Veg'
   })
 
   useEffect(() => {
@@ -58,7 +59,8 @@ const AddRestaurantModal = ({ restaurant, onClose }) => {
         active: restaurant.active !== undefined ? restaurant.active : true,
         hasOutdoorSeating: restaurant.hasOutdoorSeating || false,
         rating: restaurant.rating || 4.0,
-        monthlyCustomers: restaurant.monthlyCustomers || 0
+        monthlyCustomers: restaurant.monthlyCustomers || 0,
+        vegNonVeg: restaurant.vegNonVeg || 'Non-Veg'
       })
     }
   }, [restaurant])
@@ -162,6 +164,21 @@ const AddRestaurantModal = ({ restaurant, onClose }) => {
                 {locations.map(location => (
                   <option key={location} value={location}>{location}</option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Veg/Non-Veg Type
+              </label>
+              <select
+                name="vegNonVeg"
+                value={formData.vegNonVeg}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
+              >
+                <option value="Veg">Veg</option>
+                <option value="Non-Veg">Non-Veg</option>
               </select>
             </div>
 

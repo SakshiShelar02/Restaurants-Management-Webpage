@@ -25,6 +25,7 @@ const RestaurantManagement = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
   const [editingCategory, setEditingCategory] = useState(null)
   const [editingRestaurant, setEditingRestaurant] = useState(null)
+  const [showFilters, setShowFilters] = useState(false);
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState('')
@@ -34,6 +35,7 @@ const RestaurantManagement = () => {
   const [ratingFilter, setRatingFilter] = useState('all')
   const [capacityFilter, setCapacityFilter] = useState('all')
   const [outdoorSeatingFilter, setOutdoorSeatingFilter] = useState('all')
+  const [vegFilter, setVegFilter] = useState('all')
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
   const [pageSize, setPageSize] = useState(10)
@@ -156,6 +158,18 @@ const RestaurantManagement = () => {
       )
     }
 
+    // Veg/Non-Veg Filter
+    if (vegFilter !== 'all') {
+      filtered = filtered.filter(restaurant => {
+        if (vegFilter === 'veg') {
+          return restaurant.vegNonVeg === 'Veg'
+        } else if (vegFilter === 'non-veg') {
+          return restaurant.vegNonVeg === 'Non-Veg'
+        }
+        return true
+      })
+    }
+
     // Apply sorting
     filtered.sort((a, b) => {
       let aValue, bValue
@@ -207,6 +221,7 @@ const RestaurantManagement = () => {
     ratingFilter, 
     capacityFilter, 
     outdoorSeatingFilter, 
+    vegFilter,
     sortBy, 
     sortOrder
   ])
@@ -217,9 +232,9 @@ const RestaurantManagement = () => {
 
   const handleExport = () => {
     const csvContent = "data:text/csv;charset=utf-8," 
-      + "Restaurant Name,Category,Average Bill,Operating Cost,Seating Capacity,Location,Active,Rating,Monthly Customers,Monthly Revenue,Profit Margin,Established,Outdoor Seating\n"
+      + "Restaurant Name,Category,Veg Type,Average Bill,Operating Cost,Seating Capacity,Location,Active,Rating,Monthly Customers,Monthly Revenue,Profit Margin,Established,Outdoor Seating\n"
       + restaurants.map(restaurant => 
-          `"${restaurant.name}","${restaurant.category}",${restaurant.averageBill},${restaurant.operatingCost},${restaurant.seatingCapacity},"${restaurant.location}",${restaurant.active},${restaurant.rating},${restaurant.monthlyCustomers},${restaurant.monthlyRevenue},${restaurant.profitMargin}%,${restaurant.establishmentYear},${restaurant.hasOutdoorSeating}`
+          `"${restaurant.name}","${restaurant.category}","${restaurant.vegNonVeg}",${restaurant.averageBill},${restaurant.operatingCost},${restaurant.seatingCapacity},"${restaurant.location}",${restaurant.active},${restaurant.rating},${restaurant.monthlyCustomers},${restaurant.monthlyRevenue},${restaurant.profitMargin}%,${restaurant.establishmentYear},${restaurant.hasOutdoorSeating}`
         ).join("\n")
     
     const encodedUri = encodeURI(csvContent)
@@ -290,6 +305,7 @@ const RestaurantManagement = () => {
     setRatingFilter('all')
     setCapacityFilter('all')
     setOutdoorSeatingFilter('all')
+    setVegFilter('all')
     setSortBy('name')
     setSortOrder('asc')
   }
@@ -548,65 +564,101 @@ const RestaurantManagement = () => {
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-3 pt-3 border-t border-gray-200">
-                  <select 
-                    value={ratingFilter}
-                    onChange={(e) => setRatingFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">All Ratings</option>
-                    <option value="high-rating">High Rating (4.5+)</option>
-                    <option value="good-rating">Good Rating (4.0+)</option>
-                    <option value="average-rating">Average (3.5+)</option>
-                  </select>
-                  <select 
-                    value={capacityFilter}
-                    onChange={(e) => setCapacityFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">All Sizes</option>
-                    <option value="small">Small (&lt;50)</option>
-                    <option value="medium">Medium (50-100)</option>
-                    <option value="large">Large (&gt;100)</option>
-                  </select>
-                  <select 
-                    value={outdoorSeatingFilter}
-                    onChange={(e) => setOutdoorSeatingFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">Outdoor Seating</option>
-                    <option value="has-outdoor">Has Outdoor</option>
-                    <option value="no-outdoor">No Outdoor</option>
-                  </select>
-                  <select 
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="name">Sort by Name</option>
-                    <option value="rating">Sort by Rating</option>
-                    <option value="revenue">Sort by Revenue</option>
-                    <option value="customers">Sort by Customers</option>
-                    <option value="capacity">Sort by Capacity</option>
-                    <option value="established">Sort by Established</option>
-                  </select>
-                  <button 
-                    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="inline-flex items-center gap-1 px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-                  >
-                    {sortOrder === 'asc' ? '↑ ASC' : '↓ DESC'}
-                  </button>
-                  <button 
-                    onClick={handleClearFilters}
-                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x" aria-hidden="true">
-                      <path d="M18 6 6 18"></path>
-                      <path d="m6 6 12 12"></path>
-                    </svg>
-                    Clear All
-                  </button>
+                
+                {/* Filters Section */}
+                <div className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:bg-gray-50 shadow-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-filter">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                      </svg>
+                      Filters
+                    </button>
+
+                    <button
+                      onClick={handleClearFilters}
+                      className="inline-flex items-center gap-1 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                      </svg>
+                      Clear All
+                    </button>
+                  </div>
+
+                  {/* Expandable Filters */}
+                  {showFilters && (
+                    <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-gray-200">
+                      <select 
+                        value={ratingFilter}
+                        onChange={(e) => setRatingFilter(e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="all">All Ratings</option>
+                        <option value="high-rating">High Rating (4.5+)</option>
+                        <option value="good-rating">Good Rating (4.0+)</option>
+                        <option value="average-rating">Average (3.5+)</option>
+                      </select>
+
+                      <select 
+                        value={capacityFilter}
+                        onChange={(e) => setCapacityFilter(e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="all">All Sizes</option>
+                        <option value="small">Small (&lt;50)</option>
+                        <option value="medium">Medium (50-100)</option>
+                        <option value="large">Large (&gt;100)</option>
+                      </select>
+
+                      <select 
+                        value={outdoorSeatingFilter}
+                        onChange={(e) => setOutdoorSeatingFilter(e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="all">Outdoor Seating</option>
+                        <option value="has-outdoor">Has Outdoor</option>
+                        <option value="no-outdoor">No Outdoor</option>
+                      </select>
+
+                      {/* Veg/Non-Veg Filter */}
+                      <select 
+                        value={vegFilter}
+                        onChange={(e) => setVegFilter(e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="all">All Types</option>
+                        <option value="veg">Veg Only</option>
+                        <option value="non-veg">Non-Veg Only</option>
+                      </select>
+
+                      <select 
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="name">Sort by Name</option>
+                        <option value="rating">Sort by Rating</option>
+                        <option value="revenue">Sort by Revenue</option>
+                        <option value="customers">Sort by Customers</option>
+                        <option value="capacity">Sort by Capacity</option>
+                        <option value="established">Sort by Established</option>
+                      </select>
+
+                      <button 
+                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                        className="inline-flex items-center gap-1 px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
+                      >
+                        {sortOrder === 'asc' ? '↑ ASC' : '↓ DESC'}
+                      </button>
+                    </div>
+                  )}
                 </div>
+
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <div>Showing {filteredRestaurants.length} of {restaurants.length} restaurants</div>
                   <div className="flex items-center gap-2">
@@ -635,6 +687,7 @@ const RestaurantManagement = () => {
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Restaurant</th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Financials</th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
@@ -690,6 +743,18 @@ const RestaurantManagement = () => {
                     </td>
                     <td className="px-4 py-2">
                       <span className="text-xs text-gray-900">{restaurant.category}</span>
+                    </td>
+                    <td className="px-4 py-2">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        restaurant.vegNonVeg === 'Veg' 
+                          ? 'bg-green-50 text-green-700 border border-green-200' 
+                          : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
+                        <span className={`w-1 h-1 rounded-full mr-1 ${
+                          restaurant.vegNonVeg === 'Veg' ? 'bg-green-400' : 'bg-red-400'
+                        }`}></span>
+                        {restaurant.vegNonVeg}
+                      </span>
                     </td>
                     <td className="px-4 py-2">
                       <div>

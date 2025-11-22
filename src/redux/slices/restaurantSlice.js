@@ -25,6 +25,7 @@ const initialState = {
       monthlyCustomers: 1200,
       monthlyRevenue: 102000,
       profitMargin: 28.5,
+      vegNonVeg: 'Non-Veg',
       createdAt: '2024-01-15'
     },
     { 
@@ -43,6 +44,7 @@ const initialState = {
       monthlyCustomers: 1500,
       monthlyRevenue: 97500,
       profitMargin: 32.1,
+      vegNonVeg: 'Non-Veg',
       createdAt: '2024-01-10'
     },
     { 
@@ -61,6 +63,7 @@ const initialState = {
       monthlyCustomers: 2800,
       monthlyRevenue: 98000,
       profitMargin: 35.2,
+      vegNonVeg: 'Non-Veg',
       createdAt: '2024-01-12'
     },
     { 
@@ -79,6 +82,7 @@ const initialState = {
       monthlyCustomers: 4500,
       monthlyRevenue: 56250,
       profitMargin: 42.5,
+      vegNonVeg: 'Non-Veg',
       createdAt: '2024-01-08'
     },
     { 
@@ -97,13 +101,33 @@ const initialState = {
       monthlyCustomers: 5200,
       monthlyRevenue: 44200,
       profitMargin: 45.3,
+      vegNonVeg: 'Veg',
       createdAt: '2024-01-25'
+    },
+    { 
+      id: 6, 
+      name: 'Green Leaf Restaurant', 
+      description: 'Pure vegetarian cuisine with organic ingredients', 
+      establishmentYear: 2019, 
+      seatingCapacity: 90, 
+      category: 'Casual Dining', 
+      averageBill: 25.00, 
+      operatingCost: 12000, 
+      location: 'Delhi', 
+      active: true, 
+      hasOutdoorSeating: true, 
+      rating: 4.4,
+      monthlyCustomers: 3200,
+      monthlyRevenue: 80000,
+      profitMargin: 38.7,
+      vegNonVeg: 'Veg',
+      createdAt: '2024-01-20'
     }
   ],
   stats: {
-    totalRestaurants: 5,
-    active: 5,
-    monthlyRevenue: 397950,
+    totalRestaurants: 6,
+    active: 6,
+    monthlyRevenue: 477950,
     avgRating: 4.5
   },
   filters: {
@@ -115,7 +139,8 @@ const initialState = {
     sortBy: 'name',
     sortOrder: 'ASC',
     status: 'All',
-    location: 'all'
+    location: 'all',
+    vegNonVeg: 'all'
   }
 }
 
@@ -141,39 +166,58 @@ const restaurantSlice = createSlice({
     
     deleteCategory: (state, action) => {
       const categoryId = action.payload
-      state.categories = state.categories.filter(cat => cat.id !== categoryId)
+      const categoryToDelete = state.categories.find(cat => cat.id === categoryId)
       
-      const categoryName = state.categories.find(cat => cat.id === categoryId)?.name
-      if (categoryName) {
-        state.restaurants = state.restaurants.filter(restaurant => restaurant.category !== categoryName)
+      if (categoryToDelete) {
+        state.categories = state.categories.filter(cat => cat.id !== categoryId)
+        
+        // Remove restaurants associated with this category
+        state.restaurants = state.restaurants.filter(restaurant => 
+          !(restaurant.category === categoryToDelete.name && restaurant.location === categoryToDelete.location)
+        )
+        
+        // Update stats
+        state.stats.totalRestaurants = state.restaurants.length
+        state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
+        state.stats.monthlyRevenue = state.restaurants.reduce((total, restaurant) => total + restaurant.monthlyRevenue, 0)
+        state.stats.avgRating = state.restaurants.length > 0 
+          ? state.restaurants.reduce((total, restaurant) => total + restaurant.rating, 0) / state.restaurants.length
+          : 0
       }
-      
-      state.stats.totalRestaurants = state.restaurants.length
-      state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
-      state.stats.monthlyRevenue = state.restaurants.reduce((total, restaurant) => total + restaurant.monthlyRevenue, 0)
-      state.stats.avgRating = state.restaurants.length > 0 
-        ? state.restaurants.reduce((total, restaurant) => total + restaurant.rating, 0) / state.restaurants.length
-        : 0
     },
     
     addRestaurant: (state, action) => {
       const newRestaurant = {
         id: Date.now(),
         createdAt: new Date().toISOString().split('T')[0],
+        vegNonVeg: 'Non-Veg', // Default value
         ...action.payload,
         monthlyRevenue: action.payload.averageBill * (action.payload.monthlyCustomers || 0),
         profitMargin: ((action.payload.averageBill - (action.payload.operatingCost / (action.payload.monthlyCustomers || 1))) / action.payload.averageBill * 100).toFixed(1)
       }
       state.restaurants.push(newRestaurant)
       
+      // Update stats
       state.stats.totalRestaurants = state.restaurants.length
       state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
       state.stats.monthlyRevenue = state.restaurants.reduce((total, restaurant) => total + restaurant.monthlyRevenue, 0)
       state.stats.avgRating = state.restaurants.reduce((total, restaurant) => total + restaurant.rating, 0) / state.restaurants.length
       
-      const category = state.categories.find(cat => cat.name === action.payload.category)
+      // Update category count
+      const category = state.categories.find(cat => 
+        cat.name === action.payload.category && cat.location === action.payload.location
+      )
       if (category) {
         category.items += 1
+      } else {
+        // Create new category if it doesn't exist
+        state.categories.push({
+          id: Date.now(),
+          name: action.payload.category,
+          location: action.payload.location,
+          items: 1,
+          active: true
+        })
       }
     },
     
@@ -194,6 +238,7 @@ const restaurantSlice = createSlice({
         
         state.restaurants[restaurantIndex] = updatedRestaurant
         
+        // Update stats
         state.stats.totalRestaurants = state.restaurants.length
         state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
         state.stats.monthlyRevenue = state.restaurants.reduce((total, restaurant) => total + restaurant.monthlyRevenue, 0)
@@ -209,11 +254,15 @@ const restaurantSlice = createSlice({
         const restaurant = state.restaurants[restaurantIndex]
         state.restaurants.splice(restaurantIndex, 1)
         
-        const category = state.categories.find(cat => cat.name === restaurant.category)
+        // Update category count
+        const category = state.categories.find(cat => 
+          cat.name === restaurant.category && cat.location === restaurant.location
+        )
         if (category && category.items > 0) {
           category.items -= 1
         }
         
+        // Update stats
         state.stats.totalRestaurants = state.restaurants.length
         state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
         state.stats.monthlyRevenue = state.restaurants.reduce((total, restaurant) => total + restaurant.monthlyRevenue, 0)
@@ -273,9 +322,11 @@ const restaurantSlice = createSlice({
         
         state.restaurants.push(newRestaurant)
         
+        // Update stats
         state.stats.totalRestaurants = state.restaurants.length
         state.stats.active = state.restaurants.filter(restaurant => restaurant.active).length
         
+        // Update category
         const category = state.categories.find(cat => 
           cat.name === originalRestaurant.category && cat.location === targetLocation
         )
